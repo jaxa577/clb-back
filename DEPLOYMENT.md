@@ -133,6 +133,17 @@ If empty, the container isn't receiving the environment variables. Make sure:
 2. Using `docker-compose -f docker-compose.prod.yml` (not just `docker-compose`)
 3. Environment variables are properly formatted (no extra spaces)
 
+### Issue: OpenSSL Library Missing (Alpine Linux)
+
+**Cause:** Prisma requires OpenSSL, which isn't included in Alpine base images.
+
+**Solution:** The Dockerfile now uses `node:20-slim` (Debian-based) instead of Alpine. If you need Alpine, install OpenSSL:
+```dockerfile
+RUN apk add --no-cache openssl
+```
+
+Note: Prisma requires OpenSSL 1.1.x or 3.x. Alpine 3.17+ includes OpenSSL 3.
+
 ### Issue: Database Connection Failed
 
 **Cause:** Database not ready or wrong connection string.
