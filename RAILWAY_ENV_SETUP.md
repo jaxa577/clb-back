@@ -28,7 +28,12 @@ JWT_REFRESH_EXPIRES_IN=7d
 # Application Settings
 NODE_ENV=production
 PORT=3001
+
+# CORS Configuration - Single origin
 CORS_ORIGIN=https://cis-load-board.netlify.app
+
+# OR Multiple origins (comma-separated, no spaces around commas recommended)
+# CORS_ORIGIN=https://cis-load-board.netlify.app,https://staging.cis-load-board.netlify.app,http://localhost:3000
 
 # MinIO Configuration (if using external MinIO)
 MINIO_ENDPOINT=your-minio-host.com
