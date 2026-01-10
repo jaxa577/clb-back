@@ -4,10 +4,12 @@ services:
   postgres:
     image: postgres:15-alpine
     container_name: sng-loadboard-postgres
+    env_file:
+      - .env.production
     environment:
-      POSTGRES_DB: sng_loadboard
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${POSTGRES_DB:-sng_loadboard}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
     ports:
       - "5432:5432"
     volumes:
@@ -17,13 +19,14 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
 
   minio:
     image: minio/minio:latest
     container_name: sng-loadboard-minio
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -35,29 +38,17 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+    restart: unless-stopped
 
   backend:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: sng-loadboard-backend
-    environment:
-      DATABASE_URL: "postgresql://postgres:password@postgres:5432/sng_loadboard?schema=public"
-      JWT_SECRET: "your-super-secret-jwt-key-change-in-production"
-      JWT_REFRESH_SECRET: "your-refresh-token-secret-change-in-production"
-      JWT_EXPIRES_IN: "15m"
-      JWT_REFRESH_EXPIRES_IN: "7d"
-      NODE_ENV: "production"
-      PORT: 3001
-      CORS_ORIGIN: "http://localhost:3000"
-      MINIO_ENDPOINT: "minio"
-      MINIO_PORT: 9000
-      MINIO_USE_SSL: "false"
-      MINIO_ACCESS_KEY: "minioadmin"
-      MINIO_SECRET_KEY: "minioadmin"
-      MINIO_BUCKET: "sng-loadboard"
+    env_file:
+      - .env.production
     ports:
-      - "3001:3001"
+      - "${PORT:-3001}:${PORT:-3001}"
     depends_on:
       postgres:
         condition: service_healthy
@@ -69,9 +60,8 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    restart: unless-stopped
 
 volumes:
   postgres_data:
   minio_data:
-
-
