@@ -1,0 +1,178 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User roles enum
+enum Role {
+  SHIPPER
+  BROKER
+  DRIVER
+  ADMIN
+}
+
+// Load status enum
+enum LoadStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+// Application status enum
+enum ApplicationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+// Deal status enum
+enum DealStatus {
+  ACTIVE
+  COMPLETED
+  DISPUTED
+}
+
+// Payment type enum
+enum PaymentType {
+  CASH
+  CARD
+  TRANSFER
+}
+
+// Truck type enum
+enum TruckType {
+  TENT
+  REFRIGERATOR
+  CONTAINER
+  PLATFORM
+  TANK
+}
+
+// User model
+model User {
+  id        String   @id @default(cuid())
+  role      Role
+  name      String
+  email     String   @unique
+  password  String
+  phone     String?
+  rating    Float    @default(0)
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  // Relations
+  loads         Load[]
+  applications  Application[]
+  sentMessages  Message[] @relation("MessageSender")
+  receivedMessages Message[] @relation("MessageReceiver")
+  reviewsFrom   Review[]  @relation("ReviewFrom")
+  reviewsTo     Review[]  @relation("ReviewTo")
+  dealsAsShipper Deal[]   @relation("DealShipper")
+  dealsAsDriver  Deal[]   @relation("DealDriver")
+  dealsAsBroker  Deal[]   @relation("DealBroker")
+
+  @@map("users")
+}
+
+// Load model
+model Load {
+  id               String     @id @default(cuid())
+  shipperId        String
+  originCountry    String
+  originCity       String
+  destinationCountry String
+  destinationCity  String
+  cargoType        String
+  weight           Float
+  volume           Float?
+  truckType        TruckType
+  price            Float
+  paymentType      PaymentType
+  loadingDate      DateTime
+  status           LoadStatus @default(OPEN)
+  createdAt        DateTime   @default(now())
+
+  // Relations
+  shipper      User         @relation(fields: [shipperId], references: [id], onDelete: Cascade)
+  applications Application[]
+  deals        Deal[]
+
+  @@map("loads")
+}
+
+// Application model
+model Application {
+  id           String            @id @default(cuid())
+  loadId       String
+  applicantId  String
+  role         Role              // DRIVER or BROKER
+  status       ApplicationStatus @default(PENDING)
+  createdAt    DateTime          @default(now())
+
+  // Relations
+  load      Load @relation(fields: [loadId], references: [id], onDelete: Cascade)
+  applicant User @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+
+  @@unique([loadId, applicantId])
+  @@map("applications")
+}
+
+// Deal model
+model Deal {
+  id            String     @id @default(cuid())
+  loadId        String
+  shipperId     String
+  driverId      String
+  brokerId      String?
+  agreedPrice   Float
+  commission    Float      @default(0)
+  status        DealStatus @default(ACTIVE)
+  createdAt     DateTime   @default(now())
+
+  // Relations
+  load    Load @relation(fields: [loadId], references: [id], onDelete: Cascade)
+  shipper User @relation("DealShipper", fields: [shipperId], references: [id], onDelete: Cascade)
+  driver  User @relation("DealDriver", fields: [driverId], references: [id], onDelete: Cascade)
+  broker  User? @relation("DealBroker", fields: [brokerId], references: [id], onDelete: SetNull)
+
+  @@map("deals")
+}
+
+// Message model
+model Message {
+  id         String   @id @default(cuid())
+  senderId   String
+  receiverId String
+  content    String
+  createdAt  DateTime @default(now())
+
+  // Relations
+  sender   User @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("MessageReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@map("messages")
+}
+
+// Review model
+model Review {
+  id       String   @id @default(cuid())
+  fromUserId String
+  toUserId String
+  rating   Float
+  comment  String?
+  createdAt DateTime @default(now())
+
+  // Relations
+  fromUser User @relation("ReviewFrom", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser   User @relation("ReviewTo", fields: [toUserId], references: [id], onDelete: Cascade)
+
+  @@map("reviews")
+}
