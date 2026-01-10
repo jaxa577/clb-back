@@ -1,0 +1,23 @@
+# Railway ignore file
+node_modules
+.git
+.github
+dist
+*.md
+!README.md
+.env
+.env.*
+*.log
+coverage
+.vscode
+.idea
+test
+*.test.ts
+*.spec.ts
+docker-compose.yml
+docker-compose.prod.yml
+Dockerfile
+.dockerignore
+START_ALL.bat
+start.bat
+setup.bat
