@@ -23,4 +23,4 @@ RUN npm run build
 EXPOSE 3001
 
 # Start command with migrations
-CMD ["sh", "-c", "npx prisma migrate deploy && npm run start:prod"]
+CMD ["sh", "-c", "npx prisma migrate deploy && node dist/src/main.js"]
