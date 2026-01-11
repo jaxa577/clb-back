@@ -23,4 +23,4 @@ RUN npm run build
 EXPOSE 3001
 
 # Start command with migrations and error logging
-CMD ["sh", "-c", "npx prisma migrate deploy && echo 'Starting application...' && node dist/src/main.js 2>&1 || (echo 'Failed to start application' && exit 1)"]
+CMD npx prisma migrate deploy; echo "Starting application..."; node dist/src/main.js
