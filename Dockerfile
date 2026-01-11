@@ -22,5 +22,5 @@ RUN npm run build
 # Expose port
 EXPOSE 3001
 
-# Start command with migrations
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/src/main.js"]
+# Start command with migrations and error logging
+CMD ["sh", "-c", "npx prisma migrate deploy && echo 'Starting application...' && node dist/src/main.js 2>&1 || (echo 'Failed to start application' && exit 1)"]
