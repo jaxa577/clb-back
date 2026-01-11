@@ -22,5 +22,9 @@ RUN npm run build
 # Expose port
 EXPOSE 3001
 
-# Start command - testing without migrations first
-CMD ["node", "dist/src/main.js"]
+# Copy and set permissions for start script
+COPY start.sh .
+RUN chmod +x start.sh
+
+# Start command with debug script
+CMD ["./start.sh"]
