@@ -23,8 +23,10 @@ async function bootstrap() {
             },
         },
     }));
+    const corsOrigin = configService.get('CORS_ORIGIN') || 'http://localhost:3000';
+    const allowedOrigins = corsOrigin.split(',').map((origin) => origin.trim());
     app.enableCors({
-        origin: configService.get('CORS_ORIGIN') || 'http://localhost:3000',
+        origin: allowedOrigins.length > 1 ? allowedOrigins : corsOrigin,
         credentials: true,
     });
     app.useGlobalPipes(new common_1.ValidationPipe({

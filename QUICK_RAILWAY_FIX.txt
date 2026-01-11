@@ -1,0 +1,46 @@
+========================================
+RAILWAY QUICK FIX - Copy These Variables
+========================================
+
+Go to: Railway Dashboard → Your Service → Variables Tab
+
+Add these EXACT variables:
+
+DATABASE_URL=postgresql://postgres:ooLDQrKOlJGyNtTEVkjHjGpbYQIQhCIW@postgres.railway.internal:5432/railway
+JWT_SECRET=061fc5c8e5e95423df305da9f309cf11c8a566c6
+JWT_REFRESH_SECRET=QfZItxTnxHP0iFxoFXTgioVNYTBewVGHJdnTskhTmaGH3NdNlUF578e4qIhluTOw
+JWT_EXPIRES_IN=120m
+JWT_REFRESH_EXPIRES_IN=7d
+NODE_ENV=production
+CORS_ORIGIN=https://cis-load-board.netlify.app,http://localhost:3000
+
+========================================
+After Adding Variables:
+========================================
+
+1. Run migrations:
+   railway run npx prisma migrate deploy
+
+2. Redeploy:
+   Railway will auto-redeploy, or click "Deploy" button
+
+3. Test:
+   curl https://clb-back-production.up.railway.app/api/v1/health
+
+4. Check logs:
+   railway logs
+
+========================================
+Expected Success:
+========================================
+
+✅ Health endpoint returns: {"status":"ok",...}
+✅ Logs show: "Nest application successfully started"
+✅ Register endpoint works
+
+========================================
+If Still 500:
+========================================
+
+Share Railway logs with:
+railway logs --last 100
