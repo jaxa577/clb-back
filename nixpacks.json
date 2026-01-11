@@ -1,0 +1,16 @@
+{
+  "phases": {
+    "setup": {
+      "nixPkgs": ["nodejs_20", "openssl"]
+    },
+    "install": {
+      "cmds": ["npm install --legacy-peer-deps"]
+    },
+    "build": {
+      "cmds": ["npx prisma generate", "npm run build"]
+    }
+  },
+  "start": {
+    "cmd": "npx prisma migrate deploy && npm run start:prod"
+  }
+}
