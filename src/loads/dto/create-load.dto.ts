@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString, IsNumber, IsEnum, IsOptional, IsDateString, IsBoolean, IsInt } from 'class-validator';
-import { TruckType, PaymentType } from '@prisma/client';
+import { TruckType, PaymentType, Priority } from '@prisma/client';
 
 export class CreateLoadDto {
   @IsNotEmpty()
@@ -55,6 +55,10 @@ export class CreateLoadDto {
   @IsOptional()
   @IsInt()
   trucksCount?: number;
+
+  @IsOptional()
+  @IsEnum(Priority)
+  priority?: Priority;
 
   @IsEnum(PaymentType)
   paymentType: PaymentType;

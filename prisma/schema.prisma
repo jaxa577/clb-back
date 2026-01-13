@@ -56,6 +56,14 @@ enum TruckType {
   TANK
 }
 
+// Priority enum
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
 // User model
 model User {
   id        String   @id @default(cuid())
@@ -100,6 +108,7 @@ model Load {
   prepayment         Float?
   prepaymentCurrency String?
   trucksCount        Int?
+  priority           Priority    @default(MEDIUM)
   paymentType        PaymentType
   loadingDate        DateTime
   contactPhone       String?
