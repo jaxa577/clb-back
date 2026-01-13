@@ -40,6 +40,10 @@ export class CreateLoadDto {
 
   @IsDateString()
   loadingDate: string;
+
+  @IsOptional()
+  @IsString()
+  contactPhone?: string;
 }
 
 

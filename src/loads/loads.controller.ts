@@ -16,8 +16,8 @@ export class LoadsController {
 
   @Post()
   @UseGuards(RolesGuard)
-  @Roles(Role.SHIPPER)
-  @ApiOperation({ summary: 'Create a new load (Shipper only)' })
+  @Roles(Role.SHIPPER, Role.BROKER)
+  @ApiOperation({ summary: 'Create a new load (Shipper and Broker)' })
   @ApiResponse({ status: 201, description: 'Load created successfully' })
   create(@Body() createLoadDto: CreateLoadDto, @Request() req) {
     return this.loadsService.create(createLoadDto, req.user.id);
@@ -49,8 +49,8 @@ export class LoadsController {
 
   @Patch(':id')
   @UseGuards(RolesGuard)
-  @Roles(Role.SHIPPER)
-  @ApiOperation({ summary: 'Update load (Shipper only)' })
+  @Roles(Role.SHIPPER, Role.BROKER)
+  @ApiOperation({ summary: 'Update load (Shipper and Broker)' })
   @ApiResponse({ status: 200, description: 'Load updated successfully' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
   @ApiResponse({ status: 404, description: 'Load not found' })
@@ -60,8 +60,8 @@ export class LoadsController {
 
   @Delete(':id')
   @UseGuards(RolesGuard)
-  @Roles(Role.SHIPPER)
-  @ApiOperation({ summary: 'Delete load (Shipper only)' })
+  @Roles(Role.SHIPPER, Role.BROKER)
+  @ApiOperation({ summary: 'Delete load (Shipper and Broker)' })
   @ApiResponse({ status: 200, description: 'Load deleted successfully' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
   @ApiResponse({ status: 404, description: 'Load not found' })

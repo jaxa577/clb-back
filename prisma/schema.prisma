@@ -97,6 +97,7 @@ model Load {
   price            Float
   paymentType      PaymentType
   loadingDate      DateTime
+  contactPhone     String?
   status           LoadStatus @default(OPEN)
   createdAt        DateTime   @default(now())
 
