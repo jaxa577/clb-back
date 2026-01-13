@@ -98,6 +98,8 @@ model Load {
   paymentType      PaymentType
   loadingDate      DateTime
   contactPhone     String?
+  photos           String[]   @default([])
+  documents        String[]   @default([])
   status           LoadStatus @default(OPEN)
   createdAt        DateTime   @default(now())
 
