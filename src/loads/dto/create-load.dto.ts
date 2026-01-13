@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsNumber, IsEnum, IsOptional, IsDateString, IsArray } from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber, IsEnum, IsOptional, IsDateString } from 'class-validator';
 import { TruckType, PaymentType } from '@prisma/client';
 
 export class CreateLoadDto {
@@ -44,16 +44,6 @@ export class CreateLoadDto {
   @IsOptional()
   @IsString()
   contactPhone?: string;
-
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  photos?: string[];
-
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  documents?: string[];
 }
 
 
