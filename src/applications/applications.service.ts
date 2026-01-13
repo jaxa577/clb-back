@@ -122,7 +122,7 @@ export class ApplicationsService {
 
     // Send automatic acceptance message
     const loadDetails = `${application.load.originCity} → ${application.load.destinationCity}`;
-    const acceptMessage = `Your application for load "${loadDetails}" has been accepted! Please contact us to discuss further details.`;
+    const acceptMessage = `Ваша заявка на груз "${loadDetails}" одобрена! Пожалуйста, свяжитесь с нами для обсуждения деталей.`;
 
     await this.messagesService.sendMessage(
       userId, // shipper/broker sending the message
@@ -182,7 +182,7 @@ export class ApplicationsService {
 
     // Send automatic rejection message
     const loadDetails = `${application.load.originCity} → ${application.load.destinationCity}`;
-    const rejectMessage = `Thank you for your interest in load "${loadDetails}". Unfortunately, we have decided to proceed with another applicant. We hope to work with you on future loads.`;
+    const rejectMessage = `Спасибо за ваш интерес к грузу "${loadDetails}". К сожалению, мы приняли решение работать с другим исполнителем. Надеемся на сотрудничество в будущем.`;
 
     await this.messagesService.sendMessage(
       userId, // shipper/broker sending the message
