@@ -203,7 +203,7 @@ async function main() {
         loadId: loads[1].id,
         shipperId: users[1].id,
         driverId: users[4].id,
-        agreedPrice: loads[1].price,
+        agreedPrice: loads[1].price ?? 0,
         commission: 0, // Driver deal, no commission
         status: 'ACTIVE',
       },
@@ -214,8 +214,8 @@ async function main() {
         shipperId: users[2].id,
         driverId: users[4].id,
         brokerId: users[3].id,
-        agreedPrice: loads[3].price,
-        commission: loads[3].price * 0.05, // 5% broker commission
+        agreedPrice: loads[3].price ?? 0,
+        commission: (loads[3].price ?? 0) * 0.05, // 5% broker commission
         status: 'COMPLETED',
       },
     }),
