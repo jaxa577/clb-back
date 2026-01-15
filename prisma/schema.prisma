@@ -96,8 +96,10 @@ model Load {
   shipperId          String
   originCountry      String
   originCity         String
+  originRegion       String?
   destinationCountry String
   destinationCity    String
+  destinationRegion  String?
   cargoType          String
   weight             Float
   volume             Float?
@@ -111,6 +113,7 @@ model Load {
   priority           Priority    @default(MEDIUM)
   paymentType        PaymentType
   loadingDate        DateTime
+  deliveryDate       DateTime?
   contactPhone       String?
   status             LoadStatus  @default(OPEN)
   createdAt          DateTime    @default(now())
@@ -190,4 +193,48 @@ model Review {
   toUser   User @relation("ReviewTo", fields: [toUserId], references: [id], onDelete: Cascade)
 
   @@map("reviews")
+}
+
+// Journey status enum
+enum JourneyStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+}
+
+// Journey model
+model Journey {
+  id               String        @id @default(cuid())
+  loadId           String
+  driverId         String
+  startTime        DateTime      @default(now())
+  endTime          DateTime?
+  status           JourneyStatus @default(ACTIVE)
+  currentLatitude  Float?
+  currentLongitude Float?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  // Relations
+  locations DriverLocation[]
+
+  @@map("journeys")
+}
+
+// Driver Location model
+model DriverLocation {
+  id        String   @id @default(cuid())
+  journeyId String
+  latitude  Float
+  longitude Float
+  accuracy  Float?
+  speed     Float?
+  timestamp BigInt
+  createdAt DateTime @default(now())
+
+  // Relations
+  journey Journey @relation(fields: [journeyId], references: [id], onDelete: Cascade)
+
+  @@index([journeyId, timestamp])
+  @@map("driver_locations")
 }

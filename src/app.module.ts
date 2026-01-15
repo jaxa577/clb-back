@@ -11,6 +11,7 @@ import { ApplicationsModule } from './applications/applications.module';
 import { DealsModule } from './deals/deals.module';
 import { MessagesModule } from './messages/messages.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { JourneysModule } from './journeys/journeys.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ReviewsModule } from './reviews/reviews.module';
     DealsModule,
     MessagesModule,
     ReviewsModule,
+    JourneysModule,
   ],
   controllers: [AppController],
   providers: [AppService],
