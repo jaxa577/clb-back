@@ -9,6 +9,13 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
 
+  @Get()
+  @ApiOperation({ summary: 'Get chat list' })
+  @ApiResponse({ status: 200, description: 'Chat list retrieved' })
+  getChatList(@Request() req) {
+    return this.messagesService.getChatList(req.user.id);
+  }
+
   @Get(':userId')
   @ApiOperation({ summary: 'Get chat with specific user' })
   @ApiResponse({ status: 200, description: 'Messages retrieved' })

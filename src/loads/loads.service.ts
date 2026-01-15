@@ -184,7 +184,7 @@ export class LoadsService {
       throw new NotFoundException('Load not found');
     }
 
-    // Only shipper or admin can view applications
+    // Only shipper, broker (load owner), or admin can view applications
     if (load.shipperId !== userId && userRole !== Role.ADMIN) {
       throw new ForbiddenException('You can only view applications for your own loads');
     }
@@ -207,7 +207,7 @@ export class LoadsService {
   }
 
   async getUserLoads(userId: string, userRole: Role) {
-    const where = userRole === Role.SHIPPER
+    const where = (userRole === Role.SHIPPER || userRole === Role.BROKER)
       ? { shipperId: userId }
       : {}; // For other roles, return all loads (they can apply)
 
@@ -221,7 +221,7 @@ export class LoadsService {
             rating: true,
           },
         },
-        applications: userRole === Role.SHIPPER ? {
+        applications: (userRole === Role.SHIPPER || userRole === Role.BROKER) ? {
           include: {
             applicant: {
               select: {

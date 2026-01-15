@@ -56,6 +56,14 @@ enum TruckType {
   TANK
 }
 
+// Priority enum
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
 // User model
 model User {
   id        String   @id @default(cuid())
@@ -84,21 +92,28 @@ model User {
 
 // Load model
 model Load {
-  id               String     @id @default(cuid())
-  shipperId        String
-  originCountry    String
-  originCity       String
+  id                 String      @id @default(cuid())
+  shipperId          String
+  originCountry      String
+  originCity         String
   destinationCountry String
-  destinationCity  String
-  cargoType        String
-  weight           Float
-  volume           Float?
-  truckType        TruckType
-  price            Float
-  paymentType      PaymentType
-  loadingDate      DateTime
-  status           LoadStatus @default(OPEN)
-  createdAt        DateTime   @default(now())
+  destinationCity    String
+  cargoType          String
+  weight             Float
+  volume             Float?
+  truckType          TruckType
+  price              Float?
+  currency           String      @default("USD")
+  negotiablePrice    Boolean     @default(false)
+  prepayment         Float?
+  prepaymentCurrency String?
+  trucksCount        Int?
+  priority           Priority    @default(MEDIUM)
+  paymentType        PaymentType
+  loadingDate        DateTime
+  contactPhone       String?
+  status             LoadStatus  @default(OPEN)
+  createdAt          DateTime    @default(now())
 
   // Relations
   shipper      User         @relation(fields: [shipperId], references: [id], onDelete: Cascade)

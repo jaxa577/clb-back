@@ -2,10 +2,14 @@ import { Injectable, NotFoundException, ForbiddenException, ConflictException, B
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { Role } from '@prisma/client';
+import { MessagesService } from '../messages/messages.service';
 
 @Injectable()
 export class ApplicationsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private messagesService: MessagesService,
+  ) {}
 
   async create(createApplicationDto: CreateApplicationDto, userId: string) {
     const { loadId, role } = createApplicationDto;
@@ -122,6 +126,16 @@ export class ApplicationsService {
     // Create deal
     await this.createDeal(updatedApplication);
 
+    // Send automatic acceptance message
+    const loadDetails = `${application.load.originCity} → ${application.load.destinationCity}`;
+    const acceptMessage = `Ваша заявка на груз "${loadDetails}" одобрена! Пожалуйста, свяжитесь с нами для обсуждения деталей.`;
+
+    await this.messagesService.sendMessage(
+      userId, // shipper/broker sending the message
+      application.applicantId, // driver/broker receiving
+      acceptMessage
+    );
+
     return updatedApplication;
   }
 
@@ -146,7 +160,7 @@ export class ApplicationsService {
       throw new BadRequestException('Application is not pending');
     }
 
-    return this.prisma.application.update({
+    const updatedApplication = await this.prisma.application.update({
       where: { id },
       data: { status: 'REJECTED' },
       include: {
@@ -171,6 +185,18 @@ export class ApplicationsService {
         },
       },
     });
+
+    // Send automatic rejection message
+    const loadDetails = `${application.load.originCity} → ${application.load.destinationCity}`;
+    const rejectMessage = `Спасибо за ваш интерес к грузу "${loadDetails}". К сожалению, мы приняли решение работать с другим исполнителем. Надеемся на сотрудничество в будущем.`;
+
+    await this.messagesService.sendMessage(
+      userId, // shipper/broker sending the message
+      application.applicantId, // driver/broker receiving
+      rejectMessage
+    );
+
+    return updatedApplication;
   }
 
   private async createDeal(application: any) {
