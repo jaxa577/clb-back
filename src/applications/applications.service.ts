@@ -99,7 +99,7 @@ export class ApplicationsService {
       throw new BadRequestException('Application is not pending');
     }
 
-    // Update application status
+    // Update application status and close the load
     const updatedApplication = await this.prisma.application.update({
       where: { id },
       data: { status: 'ACCEPTED' },
@@ -111,6 +111,12 @@ export class ApplicationsService {
         },
         applicant: true,
       },
+    });
+
+    // Update load status to IN_PROGRESS (archived/closed for new applications)
+    await this.prisma.load.update({
+      where: { id: application.loadId },
+      data: { status: 'IN_PROGRESS' },
     });
 
     // Create deal
