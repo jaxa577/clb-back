@@ -12,6 +12,7 @@ import { DealsModule } from './deals/deals.module';
 import { MessagesModule } from './messages/messages.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { JourneysModule } from './journeys/journeys.module';
+import { WebsocketsModule } from './websockets/websockets.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { JourneysModule } from './journeys/journeys.module';
     MessagesModule,
     ReviewsModule,
     JourneysModule,
+    WebsocketsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

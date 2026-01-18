@@ -1,11 +1,15 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { WebsocketsGateway } from '../websockets/websockets.gateway';
 import { StartJourneyDto } from './dto/start-journey.dto';
 import { LocationUpdateDto } from './dto/location-update.dto';
 
 @Injectable()
 export class JourneysService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private websocketsGateway: WebsocketsGateway,
+  ) {}
 
   async startJourney(dto: StartJourneyDto, userId: string) {
     const { loadId } = dto;
@@ -46,13 +50,18 @@ export class JourneysService {
     }
 
     // Create journey
-    return this.prisma.journey.create({
+    const journey = await this.prisma.journey.create({
       data: {
         loadId,
         driverId: userId,
         status: 'ACTIVE',
       },
     });
+
+    // Broadcast journey started event
+    this.websocketsGateway.broadcastJourneyStatus(journey.id, 'ACTIVE');
+
+    return journey;
   }
 
   async stopJourney(journeyId: string, userId: string) {
@@ -72,13 +81,18 @@ export class JourneysService {
       throw new BadRequestException('Journey already completed');
     }
 
-    return this.prisma.journey.update({
+    const updatedJourney = await this.prisma.journey.update({
       where: { id: journeyId },
       data: {
         status: 'COMPLETED',
         endTime: new Date(),
       },
     });
+
+    // Broadcast journey completed event
+    this.websocketsGateway.broadcastJourneyStatus(journeyId, 'COMPLETED');
+
+    return updatedJourney;
   }
 
   async updateLocation(dto: LocationUpdateDto) {
@@ -116,6 +130,16 @@ export class JourneysService {
         currentLatitude: latitude,
         currentLongitude: longitude,
       },
+    });
+
+    // Broadcast location update to WebSocket clients
+    this.websocketsGateway.broadcastLocationUpdate(journeyId, {
+      journeyId,
+      latitude,
+      longitude,
+      accuracy,
+      speed,
+      timestamp,
     });
 
     return { success: true };
