@@ -4,13 +4,13 @@ import { CreateLoadDto } from './dto/create-load.dto';
 import { UpdateLoadDto } from './dto/update-load.dto';
 import { Role } from '@prisma/client';
 import { generateUniqueDisplayId } from '../utils/generate-display-id';
-import { TelegramService } from '../telegram/telegram.service';
+// import { TelegramService } from '../telegram/telegram.service';
 
 @Injectable()
 export class LoadsService {
   constructor(
     private prisma: PrismaService,
-    private telegramService: TelegramService,
+    // private telegramService: TelegramService,
   ) {}
 
   async create(createLoadDto: CreateLoadDto, userId: string) {
@@ -37,11 +37,11 @@ export class LoadsService {
     });
 
     // Send Telegram notification to drivers
-    try {
-      await this.telegramService.notifyNewLoad(load, userId);
-    } catch (error) {
-      console.error('Failed to send Telegram notification for new load:', error);
-    }
+    // try {
+    //   await this.telegramService.notifyNewLoad(load, userId);
+    // } catch (error) {
+    //   console.error('Failed to send Telegram notification for new load:', error);
+    // }
 
     return load;
   }

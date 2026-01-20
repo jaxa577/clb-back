@@ -13,7 +13,7 @@ import { MessagesModule } from './messages/messages.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { JourneysModule } from './journeys/journeys.module';
 import { WebsocketsModule } from './websockets/websockets.module';
-import { TelegramModule } from './telegram/telegram.module';
+// import { TelegramModule } from './telegram/telegram.module';
 
 @Module({
   imports: [
@@ -36,7 +36,7 @@ import { TelegramModule } from './telegram/telegram.module';
     ReviewsModule,
     JourneysModule,
     WebsocketsModule,
-    TelegramModule,
+    // TelegramModule,
   ],
   controllers: [AppController],
   providers: [AppService],
