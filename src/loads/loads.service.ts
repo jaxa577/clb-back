@@ -3,15 +3,24 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateLoadDto } from './dto/create-load.dto';
 import { UpdateLoadDto } from './dto/update-load.dto';
 import { Role } from '@prisma/client';
+import { generateUniqueDisplayId } from '../utils/generate-display-id';
+import { TelegramService } from '../telegram/telegram.service';
 
 @Injectable()
 export class LoadsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private telegramService: TelegramService,
+  ) {}
 
   async create(createLoadDto: CreateLoadDto, userId: string) {
-    return this.prisma.load.create({
+    // Generate unique display ID
+    const displayId = await generateUniqueDisplayId(this.prisma);
+
+    const load = await this.prisma.load.create({
       data: {
         ...createLoadDto,
+        displayId,
         shipperId: userId,
         loadingDate: new Date(createLoadDto.loadingDate),
       },
@@ -26,6 +35,15 @@ export class LoadsService {
         },
       },
     });
+
+    // Send Telegram notification to drivers
+    try {
+      await this.telegramService.notifyNewLoad(load, userId);
+    } catch (error) {
+      console.error('Failed to send Telegram notification for new load:', error);
+    }
+
+    return load;
   }
 
   async findAll(query: any = {}) {
@@ -172,6 +190,26 @@ export class LoadsService {
     return this.prisma.load.update({
       where: { id },
       data: { status: 'CANCELLED' },
+    });
+  }
+
+  async archive(id: string, userId: string, userRole: Role) {
+    const load = await this.prisma.load.findUnique({
+      where: { id },
+    });
+
+    if (!load) {
+      throw new NotFoundException('Load not found');
+    }
+
+    // Only shipper or admin can archive load
+    if (load.shipperId !== userId && userRole !== Role.ADMIN) {
+      throw new ForbiddenException('You can only archive your own loads');
+    }
+
+    return this.prisma.load.update({
+      where: { id },
+      data: { status: 'ARCHIVED' },
     });
   }
 

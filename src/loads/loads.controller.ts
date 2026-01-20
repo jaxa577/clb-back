@@ -69,6 +69,17 @@ export class LoadsController {
     return this.loadsService.remove(id, req.user.id, req.user.role);
   }
 
+  @Patch(':id/archive')
+  @UseGuards(RolesGuard)
+  @Roles(Role.SHIPPER, Role.BROKER)
+  @ApiOperation({ summary: 'Archive load (Shipper and Broker)' })
+  @ApiResponse({ status: 200, description: 'Load archived successfully' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({ status: 404, description: 'Load not found' })
+  archive(@Param('id') id: string, @Request() req) {
+    return this.loadsService.archive(id, req.user.id, req.user.role);
+  }
+
   @Get(':id/applications')
   @ApiOperation({ summary: 'Get load applications' })
   @ApiResponse({ status: 200, description: 'Applications retrieved successfully' })

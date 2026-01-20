@@ -24,6 +24,7 @@ enum LoadStatus {
   IN_PROGRESS
   COMPLETED
   CANCELLED
+  ARCHIVED
 }
 
 // Application status enum
@@ -66,15 +67,16 @@ enum Priority {
 
 // User model
 model User {
-  id        String   @id @default(cuid())
-  role      Role
-  name      String
-  email     String   @unique
-  password  String
-  phone     String?
-  rating    Float    @default(0)
-  verified  Boolean  @default(false)
-  createdAt DateTime @default(now())
+  id             String   @id @default(cuid())
+  role           Role
+  name           String
+  email          String   @unique
+  password       String
+  phone          String?
+  rating         Float    @default(0)
+  verified       Boolean  @default(false)
+  telegramChatId String?
+  createdAt      DateTime @default(now())
 
   // Relations
   loads         Load[]
@@ -93,6 +95,7 @@ model User {
 // Load model
 model Load {
   id                 String      @id @default(cuid())
+  displayId          String?     @unique
   shipperId          String
   originCountry      String
   originCity         String
