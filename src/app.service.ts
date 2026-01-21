@@ -12,9 +12,11 @@ export class AppService {
   async checkDatabaseHealth() {
     try {
       await this.prisma.$queryRaw`SELECT 1`;
+      const userCount = await this.prisma.user.count();
       return {
         status: 'ok',
         database: 'connected',
+        userCount,
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
