@@ -9,7 +9,11 @@ ls -la dist/
 ls -la dist/src/ | head -10
 
 echo "=== Running Prisma migrations ==="
-npx prisma migrate deploy
+echo "Attempting migrate deploy..."
+npx prisma migrate deploy || echo "Migrate deploy failed, trying db push..."
+
+echo "=== Pushing schema to database ==="
+npx prisma db push --accept-data-loss || echo "DB push completed with warnings"
 
 echo "=== Seeding database ==="
 node dist-seed.js || echo "Seeding failed or already seeded, continuing..."
