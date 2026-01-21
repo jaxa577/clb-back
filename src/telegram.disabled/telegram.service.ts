@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import * as TelegramBot from 'node-telegram-bot-api';
+import TelegramBot from 'node-telegram-bot-api';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -65,9 +65,11 @@ export class TelegramService {
 View details in the app!
     `.trim();
 
-    const promises = drivers.map((driver) =>
-      this.sendNotification(driver.telegramChatId, message)
-    );
+    const promises = drivers
+      .filter((driver) => driver.telegramChatId !== null)
+      .map((driver) =>
+        this.sendNotification(driver.telegramChatId as string, message)
+      );
 
     await Promise.allSettled(promises);
   }
@@ -81,7 +83,7 @@ View details in the app!
       where: { id: application.applicantId },
     });
 
-    if (!applicant?.telegramChatId) return;
+    if (!applicant?.telegramChatId || !load) return;
 
     const statusEmoji = status === 'ACCEPTED' ? '✅' : '❌';
     const statusText = status === 'ACCEPTED' ? 'Accepted' : 'Rejected';
@@ -110,7 +112,7 @@ Your application has been ${statusText.toLowerCase()}.
       where: { id: application.applicantId },
     });
 
-    if (!load.shipper.telegramChatId) return;
+    if (!load?.shipper.telegramChatId || !applicant) return;
 
     const message = `
 <b>📋 New Application Received!</b>
@@ -160,7 +162,7 @@ Check the app to review the application.
 <b>New Status:</b> ${newStatus}
     `.trim();
 
-    const notificationPromises = [];
+    const notificationPromises: Promise<boolean>[] = [];
 
     // Notify shipper
     if (load.shipper.telegramChatId) {
