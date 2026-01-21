@@ -21,6 +21,14 @@ export class AppController {
       timestamp: new Date().toISOString(),
       service: 'SNG LoadBoard Backend',
       version: '1.0.0',
+      environment: process.env.NODE_ENV || 'development',
     };
+  }
+
+  @Get('health/db')
+  @ApiOperation({ summary: 'Database health check' })
+  @ApiResponse({ status: 200, description: 'Database is healthy' })
+  async getDatabaseHealth() {
+    return this.appService.checkDatabaseHealth();
   }
 }

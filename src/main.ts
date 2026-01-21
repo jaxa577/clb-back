@@ -75,8 +75,14 @@ async function bootstrap() {
     },
   });
 
-  await app.listen(configService.get('PORT') ?? 3000);
-  console.log(`Application is running on: http://localhost:${configService.get('PORT') ?? 3000}`);
-  console.log(`Swagger documentation available at: http://localhost:${configService.get('PORT') ?? 3000}/api/docs`);
+  const port = configService.get('PORT') ?? 3000;
+  await app.listen(port);
+  console.log(`Application is running on: http://localhost:${port}`);
+  console.log(`Swagger documentation available at: http://localhost:${port}/api/docs`);
+  console.log(`Environment: ${process.env.NODE_ENV}`);
+  console.log(`Database URL configured: ${process.env.DATABASE_URL ? 'Yes' : 'No'}`);
 }
-bootstrap();
+bootstrap().catch((err) => {
+  console.error('Failed to start application:', err);
+  process.exit(1);
+});
