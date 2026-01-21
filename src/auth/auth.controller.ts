@@ -40,4 +40,20 @@ export class AuthController {
   getProfile(@Request() req) {
     return req.user;
   }
+
+  @Post('test-login')
+  @ApiOperation({ summary: 'Test login endpoint for debugging' })
+  async testLogin(@Body() loginDto: LoginDto) {
+    try {
+      const result = await this.authService.login(loginDto);
+      return { success: true, result };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+        stack: error.stack,
+        name: error.name,
+      };
+    }
+  }
 }
