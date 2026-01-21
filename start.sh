@@ -11,5 +11,8 @@ ls -la dist/src/ | head -10
 echo "=== Running Prisma migrations ==="
 npx prisma migrate deploy
 
+echo "=== Seeding database ==="
+npx prisma db seed || echo "Seeding failed or already seeded, continuing..."
+
 echo "=== Starting Node.js application ==="
 exec node dist/src/main.js
