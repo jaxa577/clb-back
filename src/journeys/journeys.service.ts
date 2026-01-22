@@ -184,4 +184,63 @@ export class JourneysService {
       },
     });
   }
+
+  async getAllActiveJourneys() {
+    const journeys = await this.prisma.journey.findMany({
+      where: {
+        status: 'ACTIVE',
+      },
+      include: {
+        locations: {
+          orderBy: {
+            timestamp: 'desc',
+          },
+          take: 1,
+        },
+      },
+    });
+
+    return journeys;
+  }
+
+  async getActiveJourneysWithLoads() {
+    const journeys = await this.prisma.journey.findMany({
+      where: {
+        status: 'ACTIVE',
+      },
+      include: {
+        locations: {
+          orderBy: {
+            timestamp: 'desc',
+          },
+          take: 1,
+        },
+      },
+    });
+
+    const journeysWithLoads = await Promise.all(
+      journeys.map(async (journey) => {
+        const load = await this.prisma.load.findUnique({
+          where: { id: journey.loadId },
+          include: {
+            shipper: {
+              select: {
+                id: true,
+                name: true,
+                phone: true,
+                rating: true,
+              },
+            },
+          },
+        });
+
+        return {
+          ...journey,
+          load,
+        };
+      })
+    );
+
+    return journeysWithLoads;
+  }
 }

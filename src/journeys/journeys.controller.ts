@@ -32,6 +32,13 @@ export class JourneysController {
     return this.journeysService.updateLocation(dto);
   }
 
+  @Get('tracking/active')
+  @ApiOperation({ summary: 'Get all active journeys with load details for tracking' })
+  @ApiResponse({ status: 200, description: 'Active journeys retrieved' })
+  getActiveJourneysWithLoads() {
+    return this.journeysService.getActiveJourneysWithLoads();
+  }
+
   @Get('active/:loadId')
   @ApiOperation({ summary: 'Get active journey for a load' })
   @ApiResponse({ status: 200, description: 'Active journey found' })

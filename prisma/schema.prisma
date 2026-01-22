@@ -100,9 +100,13 @@ model Load {
   originCountry      String
   originCity         String
   originRegion       String?
+  originLatitude     Float?
+  originLongitude    Float?
   destinationCountry String
   destinationCity    String
   destinationRegion  String?
+  destinationLatitude Float?
+  destinationLongitude Float?
   cargoType          String
   weight             Float
   volume             Float?

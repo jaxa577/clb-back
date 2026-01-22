@@ -10,6 +10,14 @@ export class CreateLoadDto {
   @IsString()
   originCity: string;
 
+  @IsOptional()
+  @IsNumber()
+  originLatitude?: number;
+
+  @IsOptional()
+  @IsNumber()
+  originLongitude?: number;
+
   @IsNotEmpty()
   @IsString()
   destinationCountry: string;
@@ -17,6 +25,14 @@ export class CreateLoadDto {
   @IsNotEmpty()
   @IsString()
   destinationCity: string;
+
+  @IsOptional()
+  @IsNumber()
+  destinationLatitude?: number;
+
+  @IsOptional()
+  @IsNumber()
+  destinationLongitude?: number;
 
   @IsNotEmpty()
   @IsString()
