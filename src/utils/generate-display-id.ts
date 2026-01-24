@@ -1,42 +1,36 @@
 /**
- * Generates a display ID in the format AA123456
- * - 2 uppercase letters followed by 6 digits
- * - Example: AB123456, XY987654
- */
-export function generateDisplayId(): string {
-  // Generate 2 random uppercase letters
-  const letters = Array.from({ length: 2 }, () =>
-    String.fromCharCode(65 + Math.floor(Math.random() * 26))
-  ).join('');
-
-  // Generate 6 random digits
-  const numbers = Array.from({ length: 6 }, () =>
-    Math.floor(Math.random() * 10)
-  ).join('');
-
-  return `${letters}${numbers}`;
-}
-
-/**
- * Generates a unique display ID by checking against existing IDs
+ * Generates a sequential display ID in the format AA0000001
+ * - 2 uppercase letters "AA" followed by 7 sequential digits
+ * - Example: AA0000001, AA0000002, AA0000003
  */
 export async function generateUniqueDisplayId(
-  prisma: any,
-  maxAttempts: number = 10
+  prisma: any
 ): Promise<string> {
-  for (let i = 0; i < maxAttempts; i++) {
-    const displayId = generateDisplayId();
+  // Find the latest load with a displayId starting with "AA"
+  const latestLoad = await prisma.load.findFirst({
+    where: {
+      displayId: {
+        startsWith: 'AA',
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+    select: {
+      displayId: true,
+    },
+  });
 
-    // Check if this ID already exists
-    const existing = await prisma.load.findUnique({
-      where: { displayId },
-    });
+  let nextNumber = 1;
 
-    if (!existing) {
-      return displayId;
-    }
+  if (latestLoad && latestLoad.displayId) {
+    // Extract the number part from the last ID (e.g., "AA0000001" -> "0000001")
+    const lastNumber = parseInt(latestLoad.displayId.substring(2), 10);
+    nextNumber = lastNumber + 1;
   }
 
-  // If we couldn't find a unique ID after maxAttempts, throw an error
-  throw new Error('Could not generate unique display ID');
+  // Format the number with leading zeros to make it 7 digits
+  const formattedNumber = nextNumber.toString().padStart(7, '0');
+
+  return `AA${formattedNumber}`;
 }
