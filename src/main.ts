@@ -30,16 +30,24 @@ async function bootstrap() {
   );
 
   // Enable CORS with multiple origins support
-  const corsOrigin =
-    configService.get('CORS_ORIGIN') ||
-    'https://cis-load-board.netlify.app,http://localhost:3000,https://loadboard.asia,https://www.loadboard.asia';
-  const allowedOrigins = corsOrigin
-    .split(',')
-    .map((origin: string) => origin.trim());
+  // const corsOrigin =
+  //   configService.get('CORS_ORIGIN') ||
+  //   'https://cis-load-board.netlify.app,http://localhost:3000,https://loadboard.asia,https://www.loadboard.asia';
+  // const allowedOrigins = corsOrigin
+  //   .split(',')
+  //   .map((origin: string) => origin.trim());
+
+  const allowedOrigins = [
+    'https://loadboard.asia',
+    'https://www.loadboard.asia',
+    'http://localhost:3000',
+  ];
 
   app.enableCors({
-    origin: allowedOrigins.length > 1 ? allowedOrigins : corsOrigin,
+    origin: allowedOrigins,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
+    allowedHeaders: 'Content-Type, Accept, Authorization',
   });
 
   // Global validation pipe
