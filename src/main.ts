@@ -15,21 +15,27 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
 
   // Security headers
-  app.use(helmet({
-    crossOriginEmbedderPolicy: false,
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: [`'self'`],
-        styleSrc: [`'self'`, `'unsafe-inline'`],
-        imgSrc: [`'self'`, 'data:', 'https:'],
-        scriptSrc: [`'self'`],
+  app.use(
+    helmet({
+      crossOriginEmbedderPolicy: false,
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: [`'self'`],
+          styleSrc: [`'self'`, `'unsafe-inline'`],
+          imgSrc: [`'self'`, 'data:', 'https:'],
+          scriptSrc: [`'self'`],
+        },
       },
-    },
-  }));
+    }),
+  );
 
   // Enable CORS with multiple origins support
-  const corsOrigin = configService.get('CORS_ORIGIN') || 'http://localhost:3000';
-  const allowedOrigins = corsOrigin.split(',').map((origin: string) => origin.trim());
+  const corsOrigin =
+    configService.get('CORS_ORIGIN') ||
+    'https://cis-load-board.netlify.app,http://localhost:3000,https://loadboard.asia,https://www.loadboard.asia';
+  const allowedOrigins = corsOrigin
+    .split(',')
+    .map((origin: string) => origin.trim());
 
   app.enableCors({
     origin: allowedOrigins.length > 1 ? allowedOrigins : corsOrigin,
@@ -83,9 +89,13 @@ async function bootstrap() {
   const port = configService.get('PORT') ?? 3000;
   await app.listen(port);
   console.log(`Application is running on: http://localhost:${port}`);
-  console.log(`Swagger documentation available at: http://localhost:${port}/api/docs`);
+  console.log(
+    `Swagger documentation available at: http://localhost:${port}/api/docs`,
+  );
   console.log(`Environment: ${process.env.NODE_ENV}`);
-  console.log(`Database URL configured: ${process.env.DATABASE_URL ? 'Yes' : 'No'}`);
+  console.log(
+    `Database URL configured: ${process.env.DATABASE_URL ? 'Yes' : 'No'}`,
+  );
 }
 bootstrap().catch((err) => {
   console.error('Failed to start application:', err);
