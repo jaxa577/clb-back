@@ -245,3 +245,16 @@ model DriverLocation {
   @@index([journeyId, timestamp])
   @@map("driver_locations")
 }
+
+// Telegram Chat model for bot broadcasting
+model TelegramChat {
+  id        String   @id @default(cuid())
+  chatId    String   @unique
+  title     String?
+  type      String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("telegram_chats")
+}

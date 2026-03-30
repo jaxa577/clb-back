@@ -27,6 +27,22 @@ let AppController = class AppController {
             timestamp: new Date().toISOString(),
             service: 'SNG LoadBoard Backend',
             version: '1.0.0',
+            environment: process.env.NODE_ENV || 'development',
+        };
+    }
+    async getDatabaseHealth() {
+        return this.appService.checkDatabaseHealth();
+    }
+    getConfigHealth() {
+        return {
+            status: 'ok',
+            environment: process.env.NODE_ENV || 'development',
+            databaseConfigured: !!process.env.DATABASE_URL,
+            jwtSecretConfigured: !!process.env.JWT_SECRET,
+            jwtRefreshSecretConfigured: !!process.env.JWT_REFRESH_SECRET,
+            corsOrigin: process.env.CORS_ORIGIN || 'not set',
+            port: process.env.PORT || 'default',
+            timestamp: new Date().toISOString(),
         };
     }
 };
@@ -45,6 +61,22 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], AppController.prototype, "getHealth", null);
+__decorate([
+    (0, common_1.Get)('health/db'),
+    (0, swagger_1.ApiOperation)({ summary: 'Database health check' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Database is healthy' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "getDatabaseHealth", null);
+__decorate([
+    (0, common_1.Get)('health/config'),
+    (0, swagger_1.ApiOperation)({ summary: 'Configuration check' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Configuration status' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AppController.prototype, "getConfigHealth", null);
 exports.AppController = AppController = __decorate([
     (0, swagger_1.ApiTags)('health'),
     (0, common_1.Controller)(),

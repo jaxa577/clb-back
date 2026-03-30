@@ -13,10 +13,13 @@ exports.ApplicationsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const client_1 = require("@prisma/client");
+const messages_service_1 = require("../messages/messages.service");
 let ApplicationsService = class ApplicationsService {
     prisma;
-    constructor(prisma) {
+    messagesService;
+    constructor(prisma, messagesService) {
         this.prisma = prisma;
+        this.messagesService = messagesService;
     }
     async create(createApplicationDto, userId) {
         const { loadId, role } = createApplicationDto;
@@ -104,7 +107,14 @@ let ApplicationsService = class ApplicationsService {
                 applicant: true,
             },
         });
+        await this.prisma.load.update({
+            where: { id: application.loadId },
+            data: { status: 'IN_PROGRESS' },
+        });
         await this.createDeal(updatedApplication);
+        const loadDetails = `${application.load.originCity} → ${application.load.destinationCity}`;
+        const acceptMessage = `Ваша заявка на груз "${loadDetails}" одобрена! Пожалуйста, свяжитесь с нами для обсуждения деталей.`;
+        await this.messagesService.sendMessage(userId, application.applicantId, acceptMessage);
         return updatedApplication;
     }
     async reject(id, userId, userRole) {
@@ -123,7 +133,7 @@ let ApplicationsService = class ApplicationsService {
         if (application.status !== 'PENDING') {
             throw new common_1.BadRequestException('Application is not pending');
         }
-        return this.prisma.application.update({
+        const updatedApplication = await this.prisma.application.update({
             where: { id },
             data: { status: 'REJECTED' },
             include: {
@@ -148,6 +158,10 @@ let ApplicationsService = class ApplicationsService {
                 },
             },
         });
+        const loadDetails = `${application.load.originCity} → ${application.load.destinationCity}`;
+        const rejectMessage = `Спасибо за ваш интерес к грузу "${loadDetails}". К сожалению, мы приняли решение работать с другим исполнителем. Надеемся на сотрудничество в будущем.`;
+        await this.messagesService.sendMessage(userId, application.applicantId, rejectMessage);
+        return updatedApplication;
     }
     async createDeal(application) {
         const commission = application.applicant.role === client_1.Role.BROKER ? application.load.price * 0.05 : 0;
@@ -187,6 +201,7 @@ let ApplicationsService = class ApplicationsService {
 exports.ApplicationsService = ApplicationsService;
 exports.ApplicationsService = ApplicationsService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        messages_service_1.MessagesService])
 ], ApplicationsService);
 //# sourceMappingURL=applications.service.js.map

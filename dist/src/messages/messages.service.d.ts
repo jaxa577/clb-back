@@ -34,4 +34,30 @@ export declare class MessagesService {
         senderId: string;
         receiverId: string;
     }>;
+    getChatList(userId: string): Promise<{
+        id: string;
+        otherUser: {
+            id: string;
+            role: import(".prisma/client").$Enums.Role;
+            name: string;
+        } | null;
+        lastMessage: ({
+            sender: {
+                id: string;
+                name: string;
+            };
+            receiver: {
+                id: string;
+                name: string;
+            };
+        } & {
+            id: string;
+            createdAt: Date;
+            content: string;
+            senderId: string;
+            receiverId: string;
+        }) | null;
+        unreadCount: number;
+        updatedAt: Date;
+    }[]>;
 }

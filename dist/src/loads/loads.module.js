@@ -15,6 +15,7 @@ let LoadsModule = class LoadsModule {
 exports.LoadsModule = LoadsModule;
 exports.LoadsModule = LoadsModule = __decorate([
     (0, common_1.Module)({
+        imports: [],
         providers: [loads_service_1.LoadsService],
         controllers: [loads_controller_1.LoadsController]
     })

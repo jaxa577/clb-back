@@ -13,15 +13,21 @@ exports.LoadsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const client_1 = require("@prisma/client");
+const generate_display_id_1 = require("../utils/generate-display-id");
+const event_emitter_1 = require("@nestjs/event-emitter");
 let LoadsService = class LoadsService {
     prisma;
-    constructor(prisma) {
+    eventEmitter;
+    constructor(prisma, eventEmitter) {
         this.prisma = prisma;
+        this.eventEmitter = eventEmitter;
     }
     async create(createLoadDto, userId) {
-        return this.prisma.load.create({
+        const displayId = await (0, generate_display_id_1.generateUniqueDisplayId)(this.prisma);
+        const load = await this.prisma.load.create({
             data: {
                 ...createLoadDto,
+                displayId,
                 shipperId: userId,
                 loadingDate: new Date(createLoadDto.loadingDate),
             },
@@ -36,6 +42,8 @@ let LoadsService = class LoadsService {
                 },
             },
         });
+        this.eventEmitter.emit('load.created', load);
+        return load;
     }
     async findAll(query = {}) {
         const { page = 1, limit = 10, ...filters } = query;
@@ -165,6 +173,21 @@ let LoadsService = class LoadsService {
             data: { status: 'CANCELLED' },
         });
     }
+    async archive(id, userId, userRole) {
+        const load = await this.prisma.load.findUnique({
+            where: { id },
+        });
+        if (!load) {
+            throw new common_1.NotFoundException('Load not found');
+        }
+        if (load.shipperId !== userId && userRole !== client_1.Role.ADMIN) {
+            throw new common_1.ForbiddenException('You can only archive your own loads');
+        }
+        return this.prisma.load.update({
+            where: { id },
+            data: { status: 'ARCHIVED' },
+        });
+    }
     async getLoadApplications(loadId, userId, userRole) {
         const load = await this.prisma.load.findUnique({
             where: { id: loadId },
@@ -192,7 +215,7 @@ let LoadsService = class LoadsService {
         });
     }
     async getUserLoads(userId, userRole) {
-        const where = userRole === client_1.Role.SHIPPER
+        const where = (userRole === client_1.Role.SHIPPER || userRole === client_1.Role.BROKER)
             ? { shipperId: userId }
             : {};
         return this.prisma.load.findMany({
@@ -205,7 +228,7 @@ let LoadsService = class LoadsService {
                         rating: true,
                     },
                 },
-                applications: userRole === client_1.Role.SHIPPER ? {
+                applications: (userRole === client_1.Role.SHIPPER || userRole === client_1.Role.BROKER) ? {
                     include: {
                         applicant: {
                             select: {
@@ -227,6 +250,7 @@ let LoadsService = class LoadsService {
 exports.LoadsService = LoadsService;
 exports.LoadsService = LoadsService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        event_emitter_1.EventEmitter2])
 ], LoadsService);
 //# sourceMappingURL=loads.service.js.map

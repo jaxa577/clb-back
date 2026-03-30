@@ -9,6 +9,9 @@ const config_1 = require("@nestjs/config");
 const swagger_1 = require("@nestjs/swagger");
 const helmet_1 = __importDefault(require("helmet"));
 const app_module_1 = require("./app.module");
+BigInt.prototype.toJSON = function () {
+    return this.toString();
+};
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     const configService = app.get(config_1.ConfigService);
@@ -23,11 +26,16 @@ async function bootstrap() {
             },
         },
     }));
-    const corsOrigin = configService.get('CORS_ORIGIN') || 'http://localhost:3000';
-    const allowedOrigins = corsOrigin.split(',').map((origin) => origin.trim());
+    const allowedOrigins = [
+        'https://loadboard.asia',
+        'https://www.loadboard.asia',
+        'http://localhost:3000',
+    ];
     app.enableCors({
-        origin: allowedOrigins.length > 1 ? allowedOrigins : corsOrigin,
+        origin: allowedOrigins,
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
         credentials: true,
+        allowedHeaders: 'Content-Type, Accept, Authorization',
     });
     app.useGlobalPipes(new common_1.ValidationPipe({
         whitelist: true,
@@ -61,9 +69,15 @@ async function bootstrap() {
             persistAuthorization: true,
         },
     });
-    await app.listen(configService.get('PORT') ?? 3000);
-    console.log(`Application is running on: http://localhost:${configService.get('PORT') ?? 3000}`);
-    console.log(`Swagger documentation available at: http://localhost:${configService.get('PORT') ?? 3000}/api/docs`);
+    const port = configService.get('PORT') ?? 3000;
+    await app.listen(port);
+    console.log(`Application is running on: http://localhost:${port}`);
+    console.log(`Swagger documentation available at: http://localhost:${port}/api/docs`);
+    console.log(`Environment: ${process.env.NODE_ENV}`);
+    console.log(`Database URL configured: ${process.env.DATABASE_URL ? 'Yes' : 'No'}`);
 }
-bootstrap();
+bootstrap().catch((err) => {
+    console.error('Failed to start application:', err);
+    process.exit(1);
+});
 //# sourceMappingURL=main.js.map

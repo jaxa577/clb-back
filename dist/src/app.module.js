@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
+const event_emitter_1 = require("@nestjs/event-emitter");
 const throttler_1 = require("@nestjs/throttler");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
@@ -20,6 +21,9 @@ const applications_module_1 = require("./applications/applications.module");
 const deals_module_1 = require("./deals/deals.module");
 const messages_module_1 = require("./messages/messages.module");
 const reviews_module_1 = require("./reviews/reviews.module");
+const journeys_module_1 = require("./journeys/journeys.module");
+const websockets_module_1 = require("./websockets/websockets.module");
+const telegram_module_1 = require("./telegram/telegram.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -29,6 +33,7 @@ exports.AppModule = AppModule = __decorate([
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
             }),
+            event_emitter_1.EventEmitterModule.forRoot(),
             throttler_1.ThrottlerModule.forRoot([
                 {
                     ttl: 60000,
@@ -43,6 +48,9 @@ exports.AppModule = AppModule = __decorate([
             deals_module_1.DealsModule,
             messages_module_1.MessagesModule,
             reviews_module_1.ReviewsModule,
+            journeys_module_1.JourneysModule,
+            websockets_module_1.WebsocketsModule,
+            telegram_module_1.TelegramModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

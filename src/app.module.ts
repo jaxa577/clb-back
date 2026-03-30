@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -13,13 +14,14 @@ import { MessagesModule } from './messages/messages.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { JourneysModule } from './journeys/journeys.module';
 import { WebsocketsModule } from './websockets/websockets.module';
-// import { TelegramModule } from './telegram/telegram.module';
+import { TelegramModule } from './telegram/telegram.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    EventEmitterModule.forRoot(),
     ThrottlerModule.forRoot([
       {
         ttl: 60000, // 1 minute
@@ -36,7 +38,7 @@ import { WebsocketsModule } from './websockets/websockets.module';
     ReviewsModule,
     JourneysModule,
     WebsocketsModule,
-    // TelegramModule,
+    TelegramModule,
   ],
   controllers: [AppController],
   providers: [AppService],

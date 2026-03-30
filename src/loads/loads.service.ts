@@ -4,13 +4,13 @@ import { CreateLoadDto } from './dto/create-load.dto';
 import { UpdateLoadDto } from './dto/update-load.dto';
 import { Role } from '@prisma/client';
 import { generateUniqueDisplayId } from '../utils/generate-display-id';
-// import { TelegramService } from '../telegram/telegram.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class LoadsService {
   constructor(
     private prisma: PrismaService,
-    // private telegramService: TelegramService,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   async create(createLoadDto: CreateLoadDto, userId: string) {
@@ -36,12 +36,8 @@ export class LoadsService {
       },
     });
 
-    // Send Telegram notification to drivers
-    // try {
-    //   await this.telegramService.notifyNewLoad(load, userId);
-    // } catch (error) {
-    //   console.error('Failed to send Telegram notification for new load:', error);
-    // }
+    // Emit load created event so listeners (TelegramService) can broadcast
+    this.eventEmitter.emit('load.created', load);
 
     return load;
   }

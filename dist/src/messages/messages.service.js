@@ -67,6 +67,64 @@ let MessagesService = class MessagesService {
             },
         });
     }
+    async getChatList(userId) {
+        const sentMessages = await this.prisma.message.findMany({
+            where: { senderId: userId },
+            select: { receiverId: true },
+            distinct: ['receiverId'],
+        });
+        const receivedMessages = await this.prisma.message.findMany({
+            where: { receiverId: userId },
+            select: { senderId: true },
+            distinct: ['senderId'],
+        });
+        const userIds = new Set([
+            ...sentMessages.map(m => m.receiverId),
+            ...receivedMessages.map(m => m.senderId),
+        ]);
+        const chats = await Promise.all(Array.from(userIds).map(async (otherUserId) => {
+            const lastMessage = await this.prisma.message.findFirst({
+                where: {
+                    OR: [
+                        { senderId: userId, receiverId: otherUserId },
+                        { senderId: otherUserId, receiverId: userId },
+                    ],
+                },
+                orderBy: { createdAt: 'desc' },
+                include: {
+                    sender: {
+                        select: {
+                            id: true,
+                            name: true,
+                        },
+                    },
+                    receiver: {
+                        select: {
+                            id: true,
+                            name: true,
+                        },
+                    },
+                },
+            });
+            const otherUser = await this.prisma.user.findUnique({
+                where: { id: otherUserId },
+                select: {
+                    id: true,
+                    name: true,
+                    role: true,
+                },
+            });
+            const unreadCount = 0;
+            return {
+                id: otherUserId,
+                otherUser,
+                lastMessage,
+                unreadCount,
+                updatedAt: lastMessage?.createdAt || new Date(),
+            };
+        }));
+        return chats.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+    }
 };
 exports.MessagesService = MessagesService;
 exports.MessagesService = MessagesService = __decorate([

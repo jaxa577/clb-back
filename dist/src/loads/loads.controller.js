@@ -45,6 +45,9 @@ let LoadsController = class LoadsController {
     remove(id, req) {
         return this.loadsService.remove(id, req.user.id, req.user.role);
     }
+    archive(id, req) {
+        return this.loadsService.archive(id, req.user.id, req.user.role);
+    }
     getApplications(loadId, req) {
         return this.loadsService.getLoadApplications(loadId, req.user.id, req.user.role);
     }
@@ -53,8 +56,8 @@ exports.LoadsController = LoadsController;
 __decorate([
     (0, common_1.Post)(),
     (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)(client_1.Role.SHIPPER),
-    (0, swagger_1.ApiOperation)({ summary: 'Create a new load (Shipper only)' }),
+    (0, roles_decorator_1.Roles)(client_1.Role.SHIPPER, client_1.Role.BROKER),
+    (0, swagger_1.ApiOperation)({ summary: 'Create a new load (Shipper and Broker)' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: 'Load created successfully' }),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Request)()),
@@ -95,8 +98,8 @@ __decorate([
 __decorate([
     (0, common_1.Patch)(':id'),
     (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)(client_1.Role.SHIPPER),
-    (0, swagger_1.ApiOperation)({ summary: 'Update load (Shipper only)' }),
+    (0, roles_decorator_1.Roles)(client_1.Role.SHIPPER, client_1.Role.BROKER),
+    (0, swagger_1.ApiOperation)({ summary: 'Update load (Shipper and Broker)' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Load updated successfully' }),
     (0, swagger_1.ApiResponse)({ status: 403, description: 'Forbidden' }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Load not found' }),
@@ -110,8 +113,8 @@ __decorate([
 __decorate([
     (0, common_1.Delete)(':id'),
     (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)(client_1.Role.SHIPPER),
-    (0, swagger_1.ApiOperation)({ summary: 'Delete load (Shipper only)' }),
+    (0, roles_decorator_1.Roles)(client_1.Role.SHIPPER, client_1.Role.BROKER),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete load (Shipper and Broker)' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Load deleted successfully' }),
     (0, swagger_1.ApiResponse)({ status: 403, description: 'Forbidden' }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Load not found' }),
@@ -121,6 +124,20 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], LoadsController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Patch)(':id/archive'),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(client_1.Role.SHIPPER, client_1.Role.BROKER),
+    (0, swagger_1.ApiOperation)({ summary: 'Archive load (Shipper and Broker)' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Load archived successfully' }),
+    (0, swagger_1.ApiResponse)({ status: 403, description: 'Forbidden' }),
+    (0, swagger_1.ApiResponse)({ status: 404, description: 'Load not found' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], LoadsController.prototype, "archive", null);
 __decorate([
     (0, common_1.Get)(':id/applications'),
     (0, swagger_1.ApiOperation)({ summary: 'Get load applications' }),

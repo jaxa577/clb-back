@@ -22,6 +22,9 @@ let MessagesController = class MessagesController {
     constructor(messagesService) {
         this.messagesService = messagesService;
     }
+    getChatList(req) {
+        return this.messagesService.getChatList(req.user.id);
+    }
     getChat(userId, req) {
         return this.messagesService.getChat(req.user.id, userId);
     }
@@ -30,6 +33,15 @@ let MessagesController = class MessagesController {
     }
 };
 exports.MessagesController = MessagesController;
+__decorate([
+    (0, common_1.Get)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Get chat list' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Chat list retrieved' }),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], MessagesController.prototype, "getChatList", null);
 __decorate([
     (0, common_1.Get)(':userId'),
     (0, swagger_1.ApiOperation)({ summary: 'Get chat with specific user' }),

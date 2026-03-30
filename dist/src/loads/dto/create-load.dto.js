@@ -15,15 +15,26 @@ const client_1 = require("@prisma/client");
 class CreateLoadDto {
     originCountry;
     originCity;
+    originLatitude;
+    originLongitude;
     destinationCountry;
     destinationCity;
+    destinationLatitude;
+    destinationLongitude;
     cargoType;
     weight;
     volume;
     truckType;
     price;
+    currency;
+    negotiablePrice;
+    prepayment;
+    prepaymentCurrency;
+    trucksCount;
+    priority;
     paymentType;
     loadingDate;
+    contactPhone;
 }
 exports.CreateLoadDto = CreateLoadDto;
 __decorate([
@@ -37,6 +48,16 @@ __decorate([
     __metadata("design:type", String)
 ], CreateLoadDto.prototype, "originCity", void 0);
 __decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], CreateLoadDto.prototype, "originLatitude", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], CreateLoadDto.prototype, "originLongitude", void 0);
+__decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
@@ -46,6 +67,16 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateLoadDto.prototype, "destinationCity", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], CreateLoadDto.prototype, "destinationLatitude", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], CreateLoadDto.prototype, "destinationLongitude", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
@@ -65,9 +96,40 @@ __decorate([
     __metadata("design:type", String)
 ], CreateLoadDto.prototype, "truckType", void 0);
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateLoadDto.prototype, "price", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateLoadDto.prototype, "currency", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], CreateLoadDto.prototype, "negotiablePrice", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], CreateLoadDto.prototype, "prepayment", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateLoadDto.prototype, "prepaymentCurrency", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsInt)(),
+    __metadata("design:type", Number)
+], CreateLoadDto.prototype, "trucksCount", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsEnum)(client_1.Priority),
+    __metadata("design:type", String)
+], CreateLoadDto.prototype, "priority", void 0);
 __decorate([
     (0, class_validator_1.IsEnum)(client_1.PaymentType),
     __metadata("design:type", String)
@@ -76,4 +138,9 @@ __decorate([
     (0, class_validator_1.IsDateString)(),
     __metadata("design:type", String)
 ], CreateLoadDto.prototype, "loadingDate", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateLoadDto.prototype, "contactPhone", void 0);
 //# sourceMappingURL=create-load.dto.js.map
