@@ -40,6 +40,6 @@ export class ApplicationsController {
   @ApiOperation({ summary: 'Get current user applications' })
   @ApiResponse({ status: 200, description: 'Applications retrieved' })
   getUserApplications(@Request() req) {
-    return this.applicationsService.getUserApplications(req.user.id);
+    return this.applicationsService.getUserApplications(req.user.id, req.user.role);
   }
 }

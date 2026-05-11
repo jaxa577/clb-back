@@ -33,7 +33,7 @@ let ApplicationsController = class ApplicationsController {
         return this.applicationsService.reject(id, req.user.id, req.user.role);
     }
     getUserApplications(req) {
-        return this.applicationsService.getUserApplications(req.user.id);
+        return this.applicationsService.getUserApplications(req.user.id, req.user.role);
     }
 };
 exports.ApplicationsController = ApplicationsController;

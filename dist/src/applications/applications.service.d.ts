@@ -179,7 +179,7 @@ export declare class ApplicationsService {
         applicantId: string;
     }>;
     private createDeal;
-    getUserApplications(userId: string): Promise<({
+    getUserApplications(userId: string, role: Role): Promise<({
         load: {
             shipper: {
                 id: string;

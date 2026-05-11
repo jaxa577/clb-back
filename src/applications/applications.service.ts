@@ -214,25 +214,59 @@ export class ApplicationsService {
     });
   }
 
-  async getUserApplications(userId: string) {
-    return this.prisma.application.findMany({
-      where: { applicantId: userId },
-      include: {
-        load: {
-          include: {
-            shipper: {
-              select: {
-                id: true,
-                name: true,
-                rating: true,
+  async getUserApplications(userId: string, role: Role) {
+    if (role === Role.DRIVER) {
+      return this.prisma.application.findMany({
+        where: { applicantId: userId },
+        include: {
+          load: {
+            include: {
+              shipper: {
+                select: {
+                  id: true,
+                  name: true,
+                  rating: true,
+                },
               },
             },
           },
         },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+    } else {
+      return this.prisma.application.findMany({
+        where: { 
+          load: {
+            shipperId: userId
+          }
+        },
+        include: {
+          load: {
+            include: {
+              shipper: {
+                select: {
+                  id: true,
+                  name: true,
+                  rating: true,
+                },
+              },
+            },
+          },
+          applicant: {
+            select: {
+              id: true,
+              name: true,
+              role: true,
+              rating: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+    }
   }
 }
